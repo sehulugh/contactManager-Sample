@@ -1,70 +1,266 @@
-# Getting Started with Create React App
+## Adding React via 'Create React App' tool
+Prerequisites
+- Install nodeJs
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+```
+# create App
+npx create-react-app myAppName
+cd myAppName
 
-## Available Scripts
+# run app on http://localhost:3000
+npm start
 
-In the project directory, you can run:
+```
+### App Folder Structure
+| Folder/File       | Description                                                                                                                                                                                                          |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| public            | folder contains files related to how the application will display on the client                                                                                                                                      |
+| Public/index.html | HTML template of the page                                                                                                                                                                                            |
+| src               | folder contains all of the JavaScript, CSS, and image files that will be compiled into a bundle file and injected into index.html                                                                                    |
+| src/index.js      | This file is the entry point into our application. In our code, a method called **ReactDOM.render()** is used to find an element with **id="root"** in the HTML and add our React application inside of that element |
+| src/App.js        | This file is the main component that will be rendered to the DOM                                                                                                                                                     |
 
-### `npm start`
+![Basic Structure Diagram](react-diagram.png)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+> How is React compiled into a bundle file? It uses what is called a "file loader". In the case of Create React App, **Webpack** is used.
+Webpack creates a "bundle" file containing the content of multiple files that need to be "bundled" together and it is all added together into a single file. Instead of making the HTML file go and find multiple files, which can slow down load times tremendously, it only has to find one file.
+create-react-app also install **Babel**, a JavaScript compliller that converts jsx to JavaScript (see [Babeljs.io](https://babeljs.io/repl))
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### JSX
+- ReactDOM.render(jsx, container)
+- Javascript expressions are used to ease building HTML elements in Javascript
+- Javascript variables can be passed in a JSX using curly braces
+```jsx
+cosnt name = 'David';
+cosnt el = <p>Hello {name}</p>;
+ReactDOM.render(el, document.getElementById('root'));
+```
+- Use curly braces when using jsx as attribute values
+```jsx
+// html
+<div id="name"></div>
+// jsx
+<div id={user.id}></div>
+```
+> React DOM uses **camelCase** property Naming convention eg **class** becomes **className**
 
-### `npm test`
+### Components
+Lets you split a page into independent and reusable parts, In react you can create **Functional** or **Class** components
+#### Functional Components
+This is a simple JavaScript function save that it starts with an _**upper case**_ letter. To display the component, we need to create the corresponding jsx element
+```jsx
+function Hello(){
+    return <h1>Hello World</h1>;
+}
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+const el = <Hello />;
+ReactDOM.render(el, document.getElementById('root'));
+```
+#### Class Components
+Typically used when there are more advanced user interactions like forms and animation.
+```jsx
+class Hello extends React.Component{
+    render(){
+        return <h1>Hello World</h1>;
+    }
+}
+```
+### Props
+Functional components can accept arguments, similar to JavaScript functions. These arguments are called **props**, and represent an object
+```jsx
+fucntion Hello(props){
+    return <p>Hello {props.name}</p>;
+} 
 
-### `npm run build`
+const el = <Hello name="Sesugh" />;
+```
+Components can also return other components
+```jsx
+function App(){
+    return <div>
+    <Hello name="Sesugh" />
+    <Hello name="Paul" />
+    </div>;
+}
+```
+Props can be accessed in class components using **this.props**
+```jsx
+class Hello extends React.Component{
+    render(){
+        return <p> hello {this.props.name}</p>;
+    }
+}
+```
+### State
+**state** is an object that is added as a property in a class component, this helps components change their data.
+Because state should not be modified directly, react provides a **setState()** method
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```jsx
+//class counting appp using setState
+class Counter extends React.Component{
+    state = {
+        counter : 0
+        }
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+     increment = () => this.setState({counter: this.state.counter + 1});
+    
+    render(){
+        return (
+            <div>
+                <p>{this.state.counter}<p>
+                <button onClick ={increment}>Increment</button>
+            </div>
+        );
+    }
+}
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Hooks
+Hooks was introduced to allow the use of state inside functional components, we need to import the **useState** named module from react.
+useState returns a pair ([array destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)), the current state value and a function that lets you change the state
+useState takes one argument which is the intial value of the state
+```jsx
+//function counting app using hooks
+import React, {useState} from 'react';
 
-### `npm run eject`
+function Counter(){
+    const [counter, setCounter] = useState(0);
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+    increment = () => setCounter(counter + 1);
+    
+    return (
+        <div>
+            <p>{counter}<p>
+            <button onClick ={increment}>Increment</button>
+        </div>
+    );
+}
+```
+ ### The Contact App
+```sh
+# create App
+npx create-react-app contact-mgr
+cd contact-mgr
+# open in vscode
+code .
+# Install bootstrap
+npm i bootstrap@4.1.1
+# import into index.js
+import 'bootstrap/dist/csss/bootstrap.css';
+```
+  ```jsx
+    //structure of the src folder
+    |- index.js
+    |- App.js
+    |- components
+    |-- contactMgr
+    |--- contactManager.jsx
+    |--- addPersonForm.jsx
+    |--- peopleList.jsx
+  ```
+  **Index.js**
+  This is the entry point to our react app and conatins the `reactDOM.render(jsx, rootElemet)` method and calls the App base component
+  ```jsx
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import "bootstrap/dist/css/bootstrap.css";
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+ReactDOM.render(
+  <React.StrictMode>
+    <div className="m-5">
+      <App />
+    </div>
+  </React.StrictMode>,
+  document.getElementById("root")
+);
+  ```
+**App.jsx**
+The Base component that calls the ***ContactManager*** component, we also create the contacts array which is passed into the ***ContactManager*** component via props.
+```jsx
+import ContactManager from "./components/contactMgr/contactManager";
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+function App() {
+  const contacts = ["Sesugh Hulugh", "Paul Bija"];
+  return (
+    <div>
+      <ContactManager data={contacts} />
+    </div>
+  );
+}
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+export default App;
+```
+**contactManager.jsx**
+This component exists because we need to lift the state up inorder to share it between ***addPersonForm*** and ***peopleList*** components
+```jsx
+import React, { useState } from "react";
+import AddPersonForm from "./addPersonForm";
+import PeopleList from "./peopleList";
 
-## Learn More
+const ContactManager = (props) => {
+  const [contacts, setContacts] = useState(props.data);
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  function addPerson(name) {
+    setContacts([...contacts, name]);
+  }
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+  return (
+    <>
+      <AddPersonForm handleSubmit={addPerson} />
+      <PeopleList data={contacts} />
+    </>
+  );
+};
 
-### Code Splitting
+export default ContactManager;
+```
+**AddPersonForm.jsx**
+Takes in the addPerson function as props, accepts a name and adds the name to the contact list using the [spread syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax)
+```jsx
+import React, { useState, useEffect } from "react";
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+const AddPersonForm = (props) => {
+  const [person, setPerson] = useState("");
 
-### Analyzing the Bundle Size
+  function handleChange(e) {
+    setPerson(e.target.value);
+  }
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+  function handleSubmit(e) {
+    props.handleSubmit(person);
+    setPerson("");
+    e.preventDefault();
+  }
 
-### Making a Progressive Web App
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        placeholder="Add new contact"
+        onChange={handleChange}
+        value={person}
+      />
+      <button type="submit">Add</button>
+    </form>
+  );
+};
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+export default AddPersonForm;
+```
+**peopleList.jsx**
+passes the contacts array as props and uses the map function to build a display list
+```jsx
+import React, { useState } from "react";
 
-### Advanced Configuration
+const PeopleList = (props) => {
+  const arr = props.data;
+  const listItems = arr.map((val, index) => <li key={index}>{val}</li>);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+  return <ul>{listItems}</ul>;
+};
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+export default PeopleList;
+```
+To run the application type the command `npm start` in your terminal.
